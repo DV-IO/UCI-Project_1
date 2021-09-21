@@ -1,0 +1,215 @@
+---
+Resources:
+  VPC1: 
+    Type : AWS::EC2::VPC
+    Properties:
+      CidrBlock : 10.0.0.0/16
+      Tags:
+        - Key: CyberKey.pem
+          Value: VPC1
+
+  PublicSubnet1:
+    Type : AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC1
+      CidrBlock : 10.0.0.0/24
+      Tags:
+        - Key: CyberKey.pem
+          Value: PublicSubnet1
+      AvailabilityZone: us-west-2a
+      MapPublicIpOnLaunch: true
+
+  PublicSubnet2:
+     Type : AWS::EC2::Subnet
+     Properties:
+       VpcId: !Ref VPC1
+       CidrBlock : 10.0.1.0/24
+       Tags:
+        - Key: CyberKey.pem
+          Value: PublicSubnet2
+       AvailabilityZone: us-west-2b
+       MapPublicIpOnLaunch: true
+
+  InternetGateway:
+     Type: AWS::EC2::InternetGateway
+     Properties:
+       Tags: 
+        - Key: CyberKey.pem
+          Value: IGW
+
+  AttachGateway:
+     Type: AWS::EC2::VPCGatewayAttachment
+     Properties:
+       VpcId: !Ref VPC1
+       InternetGatewayId: !Ref InternetGateway
+
+  Public1rt:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC1
+      Tags:
+       - Key: CyberKey.pem
+         Value: Public1rt
+
+  Public2rt:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC1
+      Tags:
+       - Key: CyberKey.pem
+         Value: Public2rt
+  
+  Route1:
+    Type: AWS::EC2::Route
+    DependsOn: AttachGateway
+    Properties: 
+      RouteTableId: !Ref Public1rt
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+  
+  Route2:
+    Type: AWS::EC2::Route
+    DependsOn: AttachGateway
+    Properties: 
+      RouteTableId: !Ref Public2rt
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  SubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet1
+      RouteTableId: !Ref Public1rt
+
+  SubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet2
+      RouteTableId: !Ref Public2rt
+
+  SSHSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !Ref VPC1
+      GroupDescription: Webservers-SG
+      Tags:
+       - Key: CyberKey.pem
+         Value: Webservers-SG
+      SecurityGroupIngress: 
+      - CidrIp: 0.0.0.0/0
+        FromPort: 22
+        IpProtocol: tcp
+        ToPort: 22
+ 
+  WebSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !Ref VPC1
+      GroupDescription: Enable HTTP access via user defined port 4:18:22:0D:V3
+      SecurityGroupIngress:
+      - CidrIp: 0.0.0.0/0
+        FromPort: 80
+        IpProtocol: tcp
+        ToPort: 80
+
+  ENIJumpbox:
+    Type: AWS::EC2::NetworkInterface
+    Properties:
+      SubnetId: !Ref PublicSubnet1 
+      GroupSet: 
+      - Ref: SSHSecurityGroup
+
+  JumpboxInstance:
+    Type: AWS::EC2::Instance
+    DependsOn: AttachGateway
+    Properties:
+      ImageId: ami-0c2d06d50ce30b442
+      InstanceType: t2.micro
+      Tags:
+       - Key: CyberKey.pem
+         Value: Jumpbox
+      NetworkInterfaces: 
+      - NetworkInterfaceId:
+         Ref: ENIJumpbox
+        DeviceIndex: 0
+      UserData:
+        Fn::Base64:
+           !Sub |
+              #!/bin/bash
+              sudo yum update -y
+              sudo amazon-linux-extras install docker -y
+              sudo service docker start
+              sudo chkconfig docker on
+              sudo usermod -a -G docker ec2-user
+              sudo docker pull cyberxsecurity/ansible
+      KeyName: !Ref SSHKey
+
+  ENIELK:
+    Type: AWS::EC2::NetworkInterface
+    Properties:
+      SubnetId: !Ref PublicSubnet1 
+      GroupSet: 
+      - Ref: SSHSecurityGroup
+
+  EKSInstance:
+    Type: AWS::EC2::Instance
+    DependsOn: AttachGateway
+    Properties:
+      ImageId: ami-03d5c68bab01f3496
+      InstanceType: t2.medium
+      Tags:
+       - Key: CyberKey.pem
+         Value: ELK-Server
+      NetworkInterfaces: 
+      - NetworkInterfaceId:
+         Ref: ENIELK
+        DeviceIndex: 0
+      KeyName: !Ref SSHKey
+
+  ENI1:
+    Type: AWS::EC2::NetworkInterface
+    Properties:
+      SubnetId: !Ref PublicSubnet1 
+      GroupSet: 
+      - Ref: SSHSecurityGroup 
+    
+  WebServer1Instance:
+    Type: AWS::EC2::Instance
+    DependsOn: AttachGateway
+    Properties:
+      ImageId: ami-0c2d06d50ce30b442
+      InstanceType: t2.micro
+      Tags:
+       - Key: CyberKey.pem
+         Value: Webserver1
+      NetworkInterfaces: 
+      - NetworkInterfaceId:
+         Ref: ENI1
+        DeviceIndex: 0
+      KeyName: !Ref CyberKey.pem 
+           
+  ENI2:
+    Type: AWS::EC2::NetworkInterface
+    Properties:
+      SubnetId: !Ref PublicSubnet2      
+      GroupSet: 
+      - Ref: SSHSecurityGroup 
+
+  WebServer2Instance:
+    Type: AWS::EC2::Instance
+    DependsOn: AttachGateway
+    Properties:
+      ImageId: ami-0c2d06d50ce30b442
+      InstanceType: t2.micro
+      Tags:
+       - Key: CyberKey.pem
+         Value: Webserver2
+      NetworkInterfaces: 
+      - NetworkInterfaceId:
+         Ref: ENI2
+        DeviceIndex: 0
+      KeyName: !Ref SSHKey 
+
+Parameters:
+  SSHKey:
+    Type: AWS::EC2::KeyPair::CyberKey.pem
