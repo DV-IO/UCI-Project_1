@@ -66,9 +66,12 @@ Ansible was used to automate configuration of the ELK machine. No configuration 
 - using the configuration can be repeated automatically as new machines are added. Also if updates need to be made the changes can take place in one file and then run to updated the individual machines.
 
 The playbook implements the following tasks:
-- _TODO: In 3-5 bullets, explain the steps of the ELK installation play. E.g., install Docker; download image; etc._
-- ...
-- ...
+Install docker
+Increase virtual memory
+Install python
+Install Docker python module
+Download and launch a docker container
+Enable docker service and open ports: 5601, 5044, 9200
 
 The following screenshot displays the result of running `docker ps` after successfully configuring the ELK instance.
 
@@ -76,13 +79,16 @@ The following screenshot displays the result of running `docker ps` after succes
 
 ### Target Machines & Beats
 This ELK server is configured to monitor the following machines:
-- _TODO: List the IP addresses of the machines you are monitoring_
+- 10.0.0.0
+- 10.0.1.0
 
 We have installed the following Beats on these machines:
-- _TODO: Specify which Beats you successfully installed_
+- Filebeat
+- Metricbeat
 
 These Beats allow us to collect the following information from each machine:
-- _TODO: In 1-2 sentences, explain what kind of data each beat collects, and provide 1 example of what you expect to see. E.g., `Winlogbeat` collects Windows logs, which we use to track user logon events, etc._
+- Filebeat – Monitoring for changes to the filesystem. Filebeat utilizes Apache logs for data records.
+- Metricbeat – Scans filesystem metrics for changes in (bot not limited to:) CPU usage, SSH attempts, failed sudo escalations, and CPU/RAM stats.
 
 ### Using the Playbook
 In order to use the playbook, you will need to have an Ansible control node already configured. Assuming you have such a control node provisioned: 
