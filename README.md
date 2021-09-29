@@ -98,13 +98,13 @@ SSH into the control node and follow the steps below:
 - Update the ansible.cfg file to include ELK server host information
 - Run the playbook, and navigate to http://172.31.3.47:5601/app/kibana to check that the installation worked as expected.
 
-_TODO: Answer the following questions to fill in the blanks:_
+FAQ
 - _Which file is the playbook?_ filebeat-playbook.yaml and metric-beat.yaml _Where do you copy it?_ Jump Box machine, docker container: /etc/ansible
 - _Which file do you update to make Ansible run the playbook on a specific machine?_ hosts
 - _How do I specify which machine to install the ELK server on versus which to install Filebeat on?_ You must update the respective playbook files to determine which machine will receive which software install.
 - _Which URL do you navigate to in order to check that the ELK server is running?_ http://172.31.3.47:5601/app/kibana
 
-_As a **Bonus**, provide the specific commands the user will need to run to download the playbook, update the files, etc._
+Relevant commands to aid in execution of DVWA
 - sudo docker pull (downloads an ansible docker image)
 - sudo docker ps (shows active dockers on a machine)
 - sudo docker container list -a (shows all dockers on the server)
