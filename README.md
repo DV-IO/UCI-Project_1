@@ -55,10 +55,10 @@ A summary of the access policies in place can be found in the table below.
 
 | Name        | Publicly Accessible | Allowed IP Addresses |
 |-------------|---------------------|----------------------|
-| Jump Box    | Yes                 | 34.216.240.16        |
-| Webserver 1 | No                  | 10.0.0.1-255         |
-| Webserver 2 | No                  | 10.0.0.1-255         |
-| ELK         | Yes                 | 172.31.3.47          |
+| Jump Box    | No                  | 34.216.240.16        |
+| Webserver 1 | Yes                 | 10.0.0.0             |
+| Webserver 2 | Yes                 | 10.0.1.0             |
+| ELK         | No                  | 172.31.3.47          |
 
 ### Elk Configuration
 
@@ -94,13 +94,19 @@ These Beats allow us to collect the following information from each machine:
 In order to use the playbook, you will need to have an Ansible control node already configured. Assuming you have such a control node provisioned: 
 
 SSH into the control node and follow the steps below:
-- Copy the _____ file to _____.
-- Update the _____ file to include...
-- Run the playbook, and navigate to ____ to check that the installation worked as expected.
+- Copy the playbook file(s) to /etc/ansible.
+- Update the ansible.cfg file to include ELK server host information
+- Run the playbook, and navigate to http://172.31.3.47:5601/app/kibana to check that the installation worked as expected.
 
 _TODO: Answer the following questions to fill in the blanks:_
-- _Which file is the playbook? Where do you copy it?_
-- _Which file do you update to make Ansible run the playbook on a specific machine? How do I specify which machine to install the ELK server on versus which to install Filebeat on?_
-- _Which URL do you navigate to in order to check that the ELK server is running?
+- _Which file is the playbook?_ filebeat-playbook.yaml and metric-beat.yaml _Where do you copy it?_ Jump Box machine, docker container: /etc/ansible
+- _Which file do you update to make Ansible run the playbook on a specific machine?_ hosts
+- _How do I specify which machine to install the ELK server on versus which to install Filebeat on?_ You must update the respective playbook files to determine which machine will receive which software install.
+- _Which URL do you navigate to in order to check that the ELK server is running?_ http://172.31.3.47:5601/app/kibana
 
 _As a **Bonus**, provide the specific commands the user will need to run to download the playbook, update the files, etc._
+ sudo docker ps (shows active dockers on a machine)
+ sudo docker container list -a (shows all dockers on the server)
+ sudo docker start (starts docker)
+ sudo docker attach opens connection to docker)
+ sudo systemctl restart docker (stop restart the docker daemon)
