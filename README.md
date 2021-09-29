@@ -5,7 +5,7 @@ Contents: UCI Project 1 files to implement and execute AWS Webserver with monito
 
 The files in this repository were used to configure the network depicted below.
 
-https://github.com/DV-IO/UCI-Project_1/blob/2e35670e0f2ceced5c4cee35478906c6be609665/Diagrams/Voorhees-HW12.pdf
+Images/Voorhees-HW12.png
 
 These files have been tested and used to generate a live ELK deployment on AWS. They can be used to either recreate the entire deployment pictured above. Alternatively, select portions of the UCI-Project_1 file may be used to install only certain pieces of it, such as Filebeat.
 
