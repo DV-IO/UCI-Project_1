@@ -105,8 +105,10 @@ _TODO: Answer the following questions to fill in the blanks:_
 - _Which URL do you navigate to in order to check that the ELK server is running?_ http://172.31.3.47:5601/app/kibana
 
 _As a **Bonus**, provide the specific commands the user will need to run to download the playbook, update the files, etc._
- sudo docker ps (shows active dockers on a machine)
- sudo docker container list -a (shows all dockers on the server)
- sudo docker start (starts docker)
- sudo docker attach opens connection to docker)
- sudo systemctl restart docker (stop restart the docker daemon)
+- sudo docker pull (downloads an ansible docker image)
+- sudo docker ps (shows active dockers on a machine)
+- sudo docker container list -a (shows all dockers on the server)
+- sudo docker start (starts docker)
+- sudo docker attach (opens connection to docker)
+- ansible all -m ping (ping all of the hosts in the hosts file using the ping module)
+- ansible docker-container (the `docker-container` module can be used to download and manage docker containers)
