@@ -28,12 +28,11 @@ Load balancing ensures that the application will be highly secure, in addition t
 - The benefit of a load balancer, is to protect the server(s) from: DDoS attacks, hacks - thanks to the Web Application Firewall inside of the load balancer, additionally it provides extra user security: a load balancer can request username and password for site access, and (if processing credit cards) can help simplify PCI rules compliance. 
 - A Jump Box is advatageous in that it can provide access to the user through a single node, that can be secured and monitored.
 
-Integrating an ELK server allows users to easily monitor the vulnerable VMs for changes to the _____ and system _____.
-- _TODO: What does Filebeat watch for?_
-- _TODO: What does Metricbeat record?_
+Integrating an ELK server allows users to easily monitor the vulnerable VMs for changes to the file system and system metrics.
+- Filebeat – Monitoring for changes to the filesystem. Filebeat utilizes Apache logs for data records.
+- Metricbeat – Scans filesystem metrics for changes in (bot not limited to:) CPU usage, SSH attempts, failed sudo escalations, and CPU/RAM stats.
 
 The configuration details of each machine may be found below.
-_Note: Use the [Markdown Table Generator](http://www.tablesgenerator.com/markdown_tables) to add/remove values from the table_.
 
 | Name        | Function          | IP Address  | Operating System |
 |-------------|-------------------|-------------|------------------|
@@ -46,24 +45,25 @@ _Note: Use the [Markdown Table Generator](http://www.tablesgenerator.com/markdow
 
 The machines on the internal network are not exposed to the public Internet. 
 
-Only the _____ machine can accept connections from the Internet. Access to this machine is only allowed from the following IP addresses:
-- _TODO: Add whitelisted IP addresses_
+Only the Jump Box machine can accept connections from the Internet. Access to this machine is only allowed from the following IP addresses:
+- 34.216.240.16
 
-Machines within the network can only be accessed by _____.
-- _TODO: Which machine did you allow to access your ELK VM? What was its IP address?_
+Machines within the network can only be accessed by each other.
+- Jump Box can access the ELK server, through port 172.31.3.47
 
 A summary of the access policies in place can be found in the table below.
 
-| Name     | Publicly Accessible | Allowed IP Addresses |
-|----------|---------------------|----------------------|
-| Jump Box | Yes/No              | 10.0.0.1 10.0.0.2    |
-|          |                     |                      |
-|          |                     |                      |
+| Name        | Publicly Accessible | Allowed IP Addresses |
+|-------------|---------------------|----------------------|
+| Jump Box    | Yes                 | 34.216.240.16        |
+| Webserver 1 | No                  | 10.0.0.1-255         |
+| Webserver 2 | No                  | 10.0.0.1-255         |
+| ELK         | Yes                 | 172.31.3.47          |
 
 ### Elk Configuration
 
 Ansible was used to automate configuration of the ELK machine. No configuration was performed manually, which is advantageous because...
-- _TODO: What is the main advantage of automating configuration with Ansible?_
+- using the configuration can be repeated automatically as new machines are added. Also if updates need to be made the changes can take place in one file and then run to updated the individual machines.
 
 The playbook implements the following tasks:
 - _TODO: In 3-5 bullets, explain the steps of the ELK installation play. E.g., install Docker; download image; etc._
